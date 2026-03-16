@@ -1,9 +1,24 @@
 # Extracted from Parameters2002.R: food savings calculation block
-# Inputs expected in environment:
-# - Country_MDA_Lo (contains country_title, Region)
-# - burden_morb (includes infection counts and kcal burden fields)
-# - Drug_Efficacy in burden_morb
-# - FoodPriceLMIFull2.csv (country food composition + calories price)
+#
+# Data inputs used directly by this food-savings calculation
+# - Country_MDA_Lo (columns used: country_title, Region)
+# - burden_morb (columns used: country_title, Parasite, AgeClass,
+#   Infected_aboveT, Infected_belowT, kcals_consumed_year_aboveT,
+#   kcals_consumed_year_belowT, Drug_Efficacy)
+# - FoodPriceLMIFull2.csv (columns used: country_title, food_comp, PriceCal)
+#
+# Parameters/formulas used directly
+# - prop = food_comp * PriceCal
+# - CostCal = sum(prop) / sum(food_comp)                    [country-weighted kcal price]
+# - Tot_kcals_consumed_year =
+#     ((Infected_aboveT * kcals_consumed_year_aboveT) +
+#      (Infected_belowT * kcals_consumed_year_belowT)) * Drug_Efficacy
+# - Food_Savings = Tot_kcals_consumed_year * CostCal
+# - Cost_Food_Averted_75 = Food_Savings * 0.75              [sensitivity case]
+#
+# Upstream dependency notes (computed earlier in Parameters2002.R)
+# - burden_morb is derived from prevalence/burden assumptions and includes
+#   morbidity-threshold splits and kcal losses by parasite.
 
 # 1) Build analysis table at country/parasite/age level
 fs_country <- Country_MDA_Lo %>%
